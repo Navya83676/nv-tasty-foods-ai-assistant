@@ -1,0 +1,421 @@
+{
+  "name": "Food delivery",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2d5075b8-e951-4128-ab3b-b76ef35f360f",
+      "name": "When chat message received",
+      "webhookId": "9d94279c-50fb-4a7b-88fe-51d6270a288b"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are NV Tasty Foods AI Assistant.\n\nTOOLS\n\n* items list\n* FAQ\n* Confirmation\n* Order Tracking\n\nRULES\n\n* Always use tools for data.\n* Never invent information.\n* Ask only for missing details.\n* Remember user details.\n* Return only one FAQ answer.\n* Do not combine FAQ records.\n* Keep replies short and mobile friendly.\n* If a tool returns no data, clearly inform the user.\n* Never generate fake orders, menu items, tracking details, or FAQ answers.\n\nWELCOME\n\nIf user says:\nhi\nhello\nhey\nstart\n\nReply exactly:\n\nWelcome to NV Tasty Foods 🍽️\n\n1. Place an Order\n2. FAQ / Information\n3. Check Menu Items\n4. Track My Order\n\nPlease type your request.\n\nMENU\n\nIf user asks:\nmenu\nfood list\navailable items\nwhat can I order\n\nUse items list tool.\n\nShow format:\n\nAvailable Items:\n\n* Item Name\n* Item Name\n* Item Name\n\nWhat would you like to order?\n\nORDER\n\nWhen user selects an item:\n\nCollect:\n\n* Customer Name\n* Phone Number\n* Delivery Address\n* Quantity\n\nAsk only for missing information.\n\nAutomatically extract information already provided.\n\nBefore confirming:\n\nUse items list tool.\n\nVerify:\n\n* Item exists\n* Item is available\n* Quantity > 0\n\nUse Confirmation tool.\n\nSave:\n\n* Customer Name\n* Phone Number\n* Delivery Address\n* Food Item\n* Quantity Ordered\n\nReturn:\n\nOrder Confirmed ✅\n\nOrder ID: [Order ID]\n\nCustomer: [Customer Name]\n\nPhone Number: [Phone Number]\n\nFood Item: [Food Item]\n\nQuantity: [Quantity Ordered]\n\n📍 Delivery Address:\n[Delivery Address]\n\n📦 Status: Order Placed\n\nThank you for ordering from NV Tasty Foods 🍽️\n\nFAQ\n\nUse FAQ tool.\n\nReturn ONLY the answer.\n\nDo not return the question.\n\nDo not use labels:\nQuestion:\nAnswer:\n\nReturn only the single best matching FAQ answer.\n\nExamples:\n\nUser: What is your contact number?\nAssistant: You can contact us at 919876543210.\n\nUser: What are your delivery timings?\nAssistant: We are open daily from 11:00AM to 10:00PM.\n\nTRACK ORDER\n\nIf the user wants to track an order:\n\nIf phone number is missing:\n\nPlease provide your phone number.\n\nUse the Order Tracking tool.\n\nIf the Order Tracking tool returns one or more records:\n\nUse the first returned record.\n\nRespond exactly:\n\n🍽️ Order Found\n\nOrder ID: [Order ID]\n\nCustomer: [Customer Name]\n\nFood Item: [Food Item]\n\nQuantity: [Quantity Ordered]\n\n📍 Delivery Address:\n[Delivery Address]\n\n📦 Status: [Status]\n\nThank you for choosing NV Tasty Foods!\n\nDo not display:\n- Phone Number\n- Description\n- Internal fields\n- Raw JSON\n\nIf the Order Tracking tool returns no records:\n\n❌ No order found with the provided phone number.\n\nPlease check the phone number and try again.",
+          "maxIterations": 7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        560,
+        0
+      ],
+      "id": "63a05f61-566c-43cc-82e1-ad367b8def7f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "\nGet available food items from Google Sheets.\n\nUse this tool whenever the user asks:\n\n* menu\n* menu list\n* food items\n* available items\n* stock\n* availability\n* what can I order\n* place an order\n\nReturn only items where Status = Available.\n",
+        "documentId": {
+          "__rl": true,
+          "value": "1FJB_Fw8Z_VMHzxuwTnPTlBavYE2CXhjW9YaqvGrGH7g",
+          "mode": "list",
+          "cachedResultName": "Restaurent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FJB_Fw8Z_VMHzxuwTnPTlBavYE2CXhjW9YaqvGrGH7g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "items",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FJB_Fw8Z_VMHzxuwTnPTlBavYE2CXhjW9YaqvGrGH7g/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Available"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        880,
+        304
+      ],
+      "id": "763baef3-058a-4ed7-8c12-656673be5259",
+      "name": "items list",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "s2zrx7kR6gpqWzBh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1FJB_Fw8Z_VMHzxuwTnPTlBavYE2CXhjW9YaqvGrGH7g",
+          "mode": "list",
+          "cachedResultName": "Restaurent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FJB_Fw8Z_VMHzxuwTnPTlBavYE2CXhjW9YaqvGrGH7g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1506121763,
+          "mode": "list",
+          "cachedResultName": "FAQ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FJB_Fw8Z_VMHzxuwTnPTlBavYE2CXhjW9YaqvGrGH7g/edit#gid=1506121763"
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        704,
+        304
+      ],
+      "id": "9f89b7b5-b2b0-4315-942c-866ea41fb79b",
+      "name": "FAQ",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "s2zrx7kR6gpqWzBh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1FJB_Fw8Z_VMHzxuwTnPTlBavYE2CXhjW9YaqvGrGH7g",
+          "mode": "list",
+          "cachedResultName": "Restaurent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FJB_Fw8Z_VMHzxuwTnPTlBavYE2CXhjW9YaqvGrGH7g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1384847994,
+          "mode": "list",
+          "cachedResultName": "Confirmation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FJB_Fw8Z_VMHzxuwTnPTlBavYE2CXhjW9YaqvGrGH7g/edit#gid=1384847994"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Customer_Name', `Extract the customer's full name.`, 'string') }}",
+            "Food Item": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Food_Item', `Extract the food item ordered by the customer.`, 'string') }}",
+            "Quantity Ordered": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Quantity_Ordered', `Extract the quantity ordered by the customer.`, 'string') }}",
+            "             Order Date": "={{ $now.setZone('Asia/Kolkata').format('dd MMM yyyy, hh:mm a') }}",
+            "Order ID": "={{\"ORD-\" + $now.format(\"yyyyMMddHHmmss\")}}",
+            "Phone Number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Phone_Number', `Extract the customer's phone number.\n`, 'string') }}",
+            "Delivery Address": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Delivery_Address', `Extract the customer's delivery address.`, 'string') }}",
+            "Description": "Order received successfully",
+            "Status": "Order Placed"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Customer Name",
+              "displayName": "Customer Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Delivery Address",
+              "displayName": "Delivery Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Food Item",
+              "displayName": "Food Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quantity Ordered",
+              "displayName": "Quantity Ordered",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "             Order Date",
+              "displayName": "             Order Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        544,
+        320
+      ],
+      "id": "1b05e50b-13f1-400e-a452-b611fde99e3c",
+      "name": "Confirmation",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "s2zrx7kR6gpqWzBh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool when the user wants to:\n\n- track order\n- check order status\n- order details\n- where is my order\n\nExtract the customer name from the user's message.\nSearch the Confirmation sheet using Customer Name.\nReturn matching order details.",
+        "documentId": {
+          "__rl": true,
+          "value": "1FJB_Fw8Z_VMHzxuwTnPTlBavYE2CXhjW9YaqvGrGH7g",
+          "mode": "list",
+          "cachedResultName": "Restaurent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FJB_Fw8Z_VMHzxuwTnPTlBavYE2CXhjW9YaqvGrGH7g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1384847994,
+          "mode": "list",
+          "cachedResultName": "Confirmation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FJB_Fw8Z_VMHzxuwTnPTlBavYE2CXhjW9YaqvGrGH7g/edit#gid=1384847994"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Phone Number",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Value', `Extract only the customer's phone number from the user's message.\n\nReturn only digits.\n\nExample:\n9704874874`, 'string') }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        304
+      ],
+      "id": "c6f7a1e1-121d-4a99-bbc9-ca13b2c3f16c",
+      "name": "Order Tracking",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "s2zrx7kR6gpqWzBh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        336
+      ],
+      "id": "2c4243e7-648b-4683-a2d8-0d292ed8cd86",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        224,
+        320
+      ],
+      "id": "422c764d-684e-46bc-8feb-b86202460e5b",
+      "name": "Google Gemini Chat Model",
+      "retryOnFail": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "WCWtQNmYUzmUD5JH",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "items list": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FAQ": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirmation": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Order Tracking": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f7be25c8-d067-4f0e-87ee-3caecd1c8bc0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1cb0ef66d8fe8923b7b165900c3f3e7db8eb9ed293e0dba0ccb6f3509cfd45ea"
+  },
+  "id": "PbjzsEPK3ZKrwjD5",
+  "tags": []
+}
